@@ -1,0 +1,202 @@
+\documentclass[10pt,a4paper]{article}
+\usepackage{tocloft}
+\usepackage{commons/course}
+\usepackage{listings}
+\usepackage{xcolor}
+
+% Define colors for syntax highlighting
+\definecolor{keywordstyle}{rgb}{0.0, 0.4, 0.8} % A bluer shade
+\definecolor{stringstyle}{rgb}{0.9, 0.17, 0.31} % amaranth
+\definecolor{commentstyle}{rgb}{0.1, 0.6, 0.2} % green
+\definecolor{numberstyle}{rgb}{0.4, 0.4, 0.4} % gray
+\definecolor{backgroundcolor}{rgb}{0.94, 0.97, 1.0} % aliceblue
+
+% Define the Python-like language for syntax highlighting
+\lstdefinelanguage{PythonLike}{
+	morekeywords={mov, add, sub, cmp, jmp , lw , addi,sw,bne},
+	sensitive=false,
+	morecomment=[l]{;},
+	morestring=[b]",
+}
+
+% Set the style for Python-like code
+\lstset{
+	language=PythonLike,
+	basicstyle=\ttfamily\small,
+	keywordstyle=\color{keywordstyle},
+	stringstyle=\color{stringstyle},
+	commentstyle=\color{commentstyle},
+	numbers=left,
+	numberstyle=\tiny\color{numberstyle},
+	stepnumber=1,
+	numbersep=5pt,
+	keepspaces=true,
+	tabsize=4,
+	showspaces=false,
+	showstringspaces=false,
+	showtabs=false,
+	breaklines=true,
+	breakatwhitespace=false,
+	frame=single,
+	backgroundcolor=\color{backgroundcolor},
+}
+
+\newlistof{listofproblems}{lop}{\normalsize فهرست مسائل}
+\newcommand{\addproblem}[1]{\addcontentsline{lop}{listofproblems}{\protect\numberline{}#1}}
+
+
+\begin{document}
+
+
+\سربرگ{فاز اول پروژه}{}{پاسخ‌دهنده: معین آعلی - 401105561}{استاد: رسول جلیلی}
+
+
+\section{مقدمه‌ای بر پروژه}
+
+پروژه‌ای که قرار است توسعه داده شود، مربوط به طراحی و پیاده‌سازی یک سیستم مدیریت و اجرای محفظه‌ها (Containers) مشابه سیستم‌های شناخته‌شده‌ای همچون Docker یا Podman است. این پروژه، بدون نیاز به معماری مبتنی بر دیمون (Daemonless) اجرا می‌شود که باعث افزایش پایداری و جلوگیری از نقطه تکی شکست (Single-point-of-failure) خواهد شد.
+
+هدف اصلی این پروژه، ایجاد و مدیریت محیط‌های منزوی برای اجرای برنامه‌هاست که از طریق تکنولوژی‌هایی همچون namespace ، cgroups ، chroot و union filesystem محقق می‌شود. همچنین از تکنولوژی eBPF برای نظارت عمیق‌تر بر تعامل برنامه‌ها با سیستم عامل لینوکس استفاده خواهد شد.
+
+
+\section{اهداف و ویژگی‌های پروژه}
+
+\subsection{ایجاد محیط‌های منزوی (Isolation)}
+
+\begin{itemize}
+	\item
+	 استفاده از namespace ها جهت تفکیک فضای PID ، UID ، GID ، Hostname و فایل سیستم از محیط میزبان.
+	\item محدود کردن دسترسی به فایل‌ها و دایرکتوری‌ها با
+	 chroot .
+	\item
+	 پیاده‌سازی سیستم فایل Union-filesystem (مانند overlayfs ) برای جداسازی پویا و ترکیب دایرکتوری‌ها.
+\end{itemize}
+
+\subsection{مدیریت منابع با استفاده از cgroups}
+
+\begin{itemize}
+	\item مدیریت منابع شامل حافظه، پردازنده، شبکه و I/O برای هر محفظه.
+	\item کنترل و اعمال محدودیت‌های دقیق بر منابع اختصاص‌یافته به هر محفظه.
+\end{itemize}
+
+
+\subsection{تعامل با هسته لینوکس}
+
+\begin{itemize}
+	\item 
+	استفاده از قابلیت eBPF برای نظارت بر فراخوانی‌های سیستمی و ایجاد رفتار پویا در فضای هسته.
+\end{itemize}
+
+
+\subsection{ارتباط بین محفظه‌ها}
+
+\begin{itemize}
+	\item 
+	پشتیبانی از
+	 Inter-process-communication(IPC)
+	 برای ارتباط بین محفظه‌ها در شرایط خاص.
+	
+	\item 
+	امکان استفاده از mount های اشتراکی (propagate) جهت انتشار mount ها بین محفظه‌ها.
+\end{itemize}
+
+\pagebreak
+
+\subsection{کنترل و مدیریت اجرای محفظه‌ها}
+
+\begin{itemize}
+	\item 
+	ایجاد رابط کاربری ساده و کاربردی با فرمان‌هایی نظیر run، start، list و status برای مدیریت محفظه‌ها.
+	\item 
+	قابلیت ایجاد، متوقف‌سازی، راه‌اندازی مجدد و حذف محفظه‌ها.
+\end{itemize}
+
+
+
+\section{قابلیت‌های اضافی}
+
+\begin{itemize}
+	\item
+	 پیاده‌سازی قابلیت توقف (freeze) محفظه‌ها و ادامه دادن کار از نقطه متوقف شده، با استفاده از cgroups-freezer .
+	
+	\item 
+	ایجاد قابلیت‌هایی شبیه Docker-images برای استفاده از سیستم فایل Union-filesystem .
+\end{itemize}
+
+
+\section{ابزارها و زبان‌های برنامه‌نویسی پیشنهادی}
+
+
+\subsection{زبان برنامه‌نویسی پیشنهادی:}
+
+\begin{itemize}
+	\item
+	 Go (Golang) :
+	  پیشنهاد اول به دلیل پشتیبانی قوی از قابلیت‌های سطح پایین لینوکس، وجود کتابخانه‌های آماده برای namespace و cgroups ، و استفاده گسترده در ابزارهای مشابه Docker و Kubernetes و Podman .
+	
+	\item 
+	Rust :
+	 پیشنهاد دوم برای اطمینان از ایمنی حافظه و تعامل قدرتمند با سیستم عامل.
+\end{itemize}
+
+\subsection{ابزارهای مورد نیاز:}
+
+\begin{itemize}
+	\item 
+	Linux-Kernel (هسته لینوکس): ضروری برای استفاده از namespace و cgroups .
+	
+	\item 
+	eBPF-Toolchain: شامل BCC یا libbpf برای پیاده‌سازی بخش‌های نظارتی پروژه.
+	
+	\item 
+	OverlayFS : جهت پیاده‌سازی Union-Filesystem .
+	
+	\item 
+	systemd و ابزارهای مرتبط: برای مدیریت پردازش‌ها (اختیاری اما کاربردی در محیط‌های لینوکسی).
+\end{itemize}
+
+
+\section{پیش‌نیازهای فنی پروژه}
+برای اجرای موفق این پروژه نیاز به پیش‌نیازهای زیر دارید:
+\begin{itemize}
+	\item
+	 دانش قوی از ساختار سیستم عامل لینوکس به خصوص namespace ، cgroups و chroot .
+	\item
+	 درک کافی از مدیریت منابع سیستم و تعامل با هسته لینوکس.
+	\item
+	 آشنایی با اصول طراحی سیستم‌های Daemonless .
+	\item
+	 تسلط نسبی به eBPF برای ایجاد قابلیت نظارتی قدرتمند.
+	\item
+	 آشنایی با مفاهیم پایه‌ای شبکه و IPC .
+\end{itemize}
+
+
+\section{توضیحات اهداف پروژه}
+
+\subsection{آشنایی با Namespace ها :}
+
+Namespace در لینوکس ابزاری است که منابع مختلف سیستم (مثل PID فرایندها، شبکه، کاربران، فایل سیستم و...) را از دید برنامه‌ها جداسازی کرده و به هر برنامه محیطی مجزا و منزوی ارائه می‌دهد.
+
+
+\subsection{مدیریت منابع با cgroups :}
+
+Control-Groups یا cgroups به شما امکان می‌دهد میزان استفاده از منابع سیستم را برای هر محفظه یا برنامه محدود کرده و دقیقاً کنترل کنید تا مصرف بی‌رویه منابع توسط برنامه‌ها رخ ندهد.
+
+
+\subsection{منزوی‌سازی محیط‌ها با chroot :}
+Chroot ابزاری است که به کمک آن دسترسی یک برنامه به سیستم فایل اصلی محدود می‌شود؛ درواقع برنامه در محیطی محدود اجرا می‌شود و نمی‌تواند به فایل‌ها و دایرکتوری‌های خارج از آن دسترسی پیدا کند.
+
+\subsection{ساخت سیستم‌های فایل Union :}
+Union-Filesystem ( مانند overlayfs ) روشی برای ترکیب چند دایرکتوری به صورت پویا است که به ایجاد فایل‌سیستم‌های جداگانه برای هر محفظه کمک می‌کند؛ به این ترتیب هر محفظه یک دید متفاوت و مجزا به فایل‌ها دارد.
+
+\subsection{ایجاد یک سیستم مدیریت محفظه:}
+هدف این است که سیستمی مشابه ابزارهایی مانند Podman طراحی شود که وظیفه ایجاد، مدیریت، اجرا و نظارت بر محفظه‌ها را دارد و یک رابط ساده برای کنترل آن‌ها ارائه می‌دهد.
+
+\subsection{تعامل با سیستم‌عامل لینوکس:}
+در این هدف لازم است مستقیماً با هسته لینوکس ارتباط برقرار کرده و با استفاده از فراخوانی‌های سیستمی و کدنویسی سطح پایین، قابلیت‌های عمیق‌تری در سیستم ایجاد شود.
+
+\subsection{آشنایی با eBPF :}
+eBPF تکنولوژی قدرتمندی است که اجازه می‌دهد رفتار دلخواه و پویایی در هسته سیستم‌عامل ایجاد کرده و به شکل مؤثر و ایمن فعالیت‌های سیستم عامل و برنامه‌ها را مانیتور یا کنترل کنید.
+
+
+\end{document}
