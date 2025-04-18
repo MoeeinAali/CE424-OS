@@ -1,15 +1,16 @@
-# CE{Code of Course}-{Short Name of Course}
-Solutions to Prof. {Name of Prof}'s CE{Code of Course}: {Full Name of Course} (Sharif University of Technology - {Semester} {Year}) Assignments
+# CE424-OS
+Solutions to Prof. Jalili's CE424:  Operating Systems (Sharif University of Technology - Spring 2025) Assignments
 
 ## Table of Contents
 
-- [Overview](#overview)
-- [Assignments](#assignments)
-- [Exams](#exams)
-- [Slides](#slides)
-- [Notes](#notes)
-- [Source](#source)
-- [Maintainer](#maintainer)
+- [CE424-OS](#ce424-os)
+  - [Table of Contents](#table-of-contents)
+  - [Assignments](#assignments)
+  - [Exams](#exams)
+  - [Slides](#slides)
+  - [Notes](#notes)
+  - [Source](#source)
+  - [Maintainer](#maintainer)
 
 ## Assignments
 
