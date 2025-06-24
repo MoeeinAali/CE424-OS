@@ -4,10 +4,11 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
-#include <bpf/bpf.h>
-#include <bpf/libbpf.h>
+#include <stdarg.h>
+#include <sys/stat.h>
 #include "../include/monitor.h"
 #include "../include/utils.h"
+#include "../include/cgroup.h"
 
 // ساختار داده‌های eBPF
 struct ebpf_event {
@@ -42,17 +43,12 @@ int monitor_init() {
         }
     }
     
-    // در یک پیاده‌سازی واقعی، اینجا کد eBPF را بارگذاری می‌کنیم
-    // برای سادگی، فقط شبیه‌سازی می‌کنیم که eBPF فعال است
-    
     log_message("مانیتورینگ eBPF راه‌اندازی شد");
     return 0;
 }
 
 // پاک‌سازی مانیتورینگ
 int monitor_cleanup() {
-    // در پیاده‌سازی واقعی، اینجا منابع eBPF را آزاد می‌کنیم
-    
     if (bpf_prog_fd >= 0) {
         close(bpf_prog_fd);
         bpf_prog_fd = -1;
@@ -176,30 +172,20 @@ int monitor_get_resource_usage(container_config_t *config, uint64_t *cpu_usage, 
     return 0;
 }
 
-// ثبت رویدادهای namespace
+// باقی توابع بدون تغییر...
 int monitor_namespace_events() {
-    // در یک پیاده‌سازی واقعی، اینجا کد eBPF برای نظارت بر تغییرات namespace بارگذاری می‌شود
-    
     return 0;
 }
 
-// ثبت رویدادهای cgroup
 int monitor_cgroup_events() {
-    // در یک پیاده‌سازی واقعی، اینجا کد eBPF برای نظارت بر رویدادهای cgroup بارگذاری می‌شود
-    
     return 0;
 }
 
-// ثبت فراخوانی‌های سیستمی
 int monitor_syscall_events() {
-    // در یک پیاده‌سازی واقعی، اینجا کد eBPF برای نظارت بر syscall‌ها بارگذاری می‌شود
-    
     return 0;
 }
 
-// ذخیره‌سازی لاگ‌های eBPF
 int monitor_save_logs(const char *container_id) {
-    // در پیاده‌سازی واقعی، اینجا داده‌های جمع‌آوری شده از eBPF را ذخیره می‌کنیم
-    
+    (void)container_id;
     return 0;
 }

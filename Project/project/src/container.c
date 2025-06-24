@@ -1,8 +1,14 @@
+#include <sched.h>
+#include <sys/wait.h>
+#include <sys/mount.h>
+#include <inttypes.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <sched.h>
+#include <inttypes.h>
 #include <fcntl.h>
 #include <time.h>
 #include <signal.h>
@@ -199,8 +205,7 @@ int container_start(container_manager_t *manager, const char *container_id) {
     char pid_str[16];
     snprintf(pid_str, sizeof(pid_str), "%d", pid);
     char cgroup_procs_path[512];
-    snprintf(cgroup_procs_path, sizeof(cgroup_procs_path), "/sys/fs/cgroup/unified%s/cgroup.procs", config->cgroup_path);
-    
+    snprintf(cgroup_procs_path, sizeof(cgroup_procs_path), "/sys/fs/cgroup/unified/%s/cgroup.procs", config->id);    
     int fd = open(cgroup_procs_path, O_WRONLY);
     if (fd == -1) {
         log_error("خطا در باز کردن فایل cgroup.procs");
@@ -294,7 +299,7 @@ int container_status(container_manager_t *manager, const char *container_id) {
         // دریافت مصرف منابع
         uint64_t cpu_usage, mem_usage, io_read, io_write;
         if (monitor_get_resource_usage(config, &cpu_usage, &mem_usage, &io_read, &io_write) == 0) {
-            printf("مصرف CPU: %lu%%\n", cpu_usage);
+            printf("مصرف CPU: %" PRIu64 "%%\n", cpu_usage);
             printf("مصرف حافظه: %lu MB\n", mem_usage / (1024 * 1024));
             printf("خواندن I/O: %lu KB\n", io_read / 1024);
             printf("نوشتن I/O: %lu KB\n", io_write / 1024);

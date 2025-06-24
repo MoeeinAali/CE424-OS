@@ -4,6 +4,7 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <time.h>
+#include <math.h>
 #include <sys/time.h>
 #include <sys/resource.h>
 #include <sched.h>

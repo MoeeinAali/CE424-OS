@@ -2,6 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <getopt.h>
+#include <sys/wait.h>
+#include <inttypes.h>
 #include "../include/cli.h"
 #include "../include/container.h"
 #include "../include/utils.h"
